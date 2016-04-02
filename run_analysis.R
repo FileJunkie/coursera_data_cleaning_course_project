@@ -13,10 +13,15 @@ activities <- read.table(con)
 con <- unz("data.zip", "UCI HAR Dataset/features.txt")
 features <- read.table(con)
 
+# We don't really need every single feature var - only the mean() and std() ones
+featuresFilter <- grepl("mean\\(\\)|std\\(\\)",features$V2)
+
 # Contains the observations of the feature variables values
 # We have already read their names
 con <- unz("data.zip", "UCI HAR Dataset/train/X_train.txt")
 x_train <- read.table(con, col.names = features$V2)
+# We don't need every column
+x_train <- x_train[,featuresFilter]
 
 # Shows which vector belongs to which subject
 con <- unz("data.zip", "UCI HAR Dataset/train/subject_train.txt")
@@ -30,6 +35,8 @@ y_train <- read.table(con)
 # We have already read their names
 con <- unz("data.zip", "UCI HAR Dataset/test/X_test.txt")
 x_test <- read.table(con, col.names = features$V2)
+# We don't need every column
+x_test <- x_test[,featuresFilter]
 
 # Shows which vector belongs to which subject
 con <- unz("data.zip", "UCI HAR Dataset/test/subject_test.txt")
@@ -56,3 +63,7 @@ x_test$type <- "test"
 
 # Merging data
 merged <- rbind(x_train, x_test)
+
+## Done. writing data.
+
+write.table(merged, file="result.txt", row.names = FALSE)
