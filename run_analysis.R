@@ -14,8 +14,9 @@ con <- unz("data.zip", "UCI HAR Dataset/features.txt")
 features <- read.table(con)
 
 # Contains the observations of the feature variables values
+# We have already read their names
 con <- unz("data.zip", "UCI HAR Dataset/train/X_train.txt")
-x_train <- read.table(con)
+x_train <- read.table(con, col.names = features$V2)
 
 # Shows which vector belongs to which subject
 con <- unz("data.zip", "UCI HAR Dataset/train/subject_train.txt")
@@ -26,8 +27,9 @@ con <- unz("data.zip", "UCI HAR Dataset/train/y_train.txt")
 y_train <- read.table(con)
 
 # Contains the observations of the feature variables values
+# We have already read their names
 con <- unz("data.zip", "UCI HAR Dataset/test/X_test.txt")
-x_test <- read.table(con)
+x_test <- read.table(con, col.names = features$V2)
 
 # Shows which vector belongs to which subject
 con <- unz("data.zip", "UCI HAR Dataset/test/subject_test.txt")
@@ -36,3 +38,18 @@ subject_test <- read.table(con)
 # Shows which activity was happening
 con <- unz("data.zip", "UCI HAR Dataset/test/y_test.txt")
 y_test <- read.table(con)
+
+## Data read. Manipulating
+
+# Adding activity data
+x_train$activity <- merge(y_train, activities)$V2
+x_test$activity <- merge(y_test, activities)$V2
+
+# Adding subject data
+
+x_train$subject <- subject_train
+x_test$subject <- subject_test
+
+# Adding the data type
+x_train$type <- "train"
+x_test$type <- "test"
