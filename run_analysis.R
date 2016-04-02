@@ -11,15 +11,27 @@ activities <- read.table(con)
 
 # Contains the enumeration of features variables
 con <- unz("data.zip", "UCI HAR Dataset/features.txt")
-features <- read.table(con)
+features <- read.table(con)$V2
 
 # We don't really need every single feature var - only the mean() and std() ones
-featuresFilter <- grepl("mean\\(\\)|std\\(\\)",features$V2)
+featuresFilter <- grepl("mean\\(\\)|std\\(\\)",features)
+
+# Making names more readable
+features <- sub("\\(\\)","",features)
+features <- sub("^t","time.",features)
+features <- sub("^f","frequency.",features)
+features <- gsub("Body","body.",features)
+features <- sub("Gravity","gravity.",features)
+features <- sub("Acc","acceleration.",features)
+features <- sub("Gyro","gyroscope.",features)
+features <- sub("Jerk","jerk.",features)
+features <- sub("Mag","magnitude.",features)
+features <- sub("-","",features)
 
 # Contains the observations of the feature variables values
 # We have already read their names
 con <- unz("data.zip", "UCI HAR Dataset/train/X_train.txt")
-x_train <- read.table(con, col.names = features$V2)
+x_train <- read.table(con, col.names = features)
 # We don't need every column
 x_train <- x_train[,featuresFilter]
 
@@ -34,7 +46,7 @@ y_train <- read.table(con)
 # Contains the observations of the feature variables values
 # We have already read their names
 con <- unz("data.zip", "UCI HAR Dataset/test/X_test.txt")
-x_test <- read.table(con, col.names = features$V2)
+x_test <- read.table(con, col.names = features)
 # We don't need every column
 x_test <- x_test[,featuresFilter]
 
@@ -48,14 +60,13 @@ y_test <- read.table(con)
 
 ## Data read. Manipulating
 
+# Adding subject data
+x_train$subject <- subject_train$V1
+x_test$subject <- subject_test$V1
+
 # Adding activity data
 x_train$activity <- merge(y_train, activities)$V2
 x_test$activity <- merge(y_test, activities)$V2
-
-# Adding subject data
-
-x_train$subject <- subject_train$V1
-x_test$subject <- subject_test$V1
 
 # Adding the data type
 x_train$type <- "train"
@@ -63,6 +74,12 @@ x_test$type <- "test"
 
 # Merging data
 merged <- rbind(x_train, x_test)
+
+# Reordering data to put the newly added data to the beginning
+columns <- ncol(merged)
+merged <- subset(merged, select=c(columns, 1:(columns-1)))
+merged <- subset(merged, select=c(columns, 1:(columns-1)))
+merged <- subset(merged, select=c(columns, 1:(columns-1)))
 
 ## Done. writing data.
 
