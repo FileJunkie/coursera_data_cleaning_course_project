@@ -47,9 +47,12 @@ x_test$activity <- merge(y_test, activities)$V2
 
 # Adding subject data
 
-x_train$subject <- subject_train
-x_test$subject <- subject_test
+x_train$subject <- subject_train$V1
+x_test$subject <- subject_test$V1
 
 # Adding the data type
 x_train$type <- "train"
 x_test$type <- "test"
+
+# Merging data
+merged <- rbind(x_train, x_test)
