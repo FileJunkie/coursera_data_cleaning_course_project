@@ -77,9 +77,7 @@ merged <- rbind(x_train, x_test)
 
 # Reordering data to put the newly added data to the beginning
 columns <- ncol(merged)
-merged <- subset(merged, select=c(columns, 1:(columns-1)))
-merged <- subset(merged, select=c(columns, 1:(columns-1)))
-merged <- subset(merged, select=c(columns, 1:(columns-1)))
+merged <- subset(merged, select=c((columns-2):columns, 1:(columns-3)))
 
 ## Done. writing data.
 
